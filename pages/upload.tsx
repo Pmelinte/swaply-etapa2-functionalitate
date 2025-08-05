@@ -5,7 +5,7 @@ export default function UploadPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleUpload = async (e: React.FormEvent) => {
+  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) {
       setMessage('Selectează un fișier mai întâi.');
@@ -13,31 +13,31 @@ export default function UploadPage() {
     }
 
     setLoading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await fetch('/api/objects/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setMessage(`Fișier încărcat: ${data.path}`);
-      } else {
-        setMessage(`Eroare: ${data.error || 'Upload eșuat'}`);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch('/api/objects/upload', {
+          method: 'POST',
+          body: reader.result as string,
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setMessage(`Fișier încărcat: ${data.url}`);
+        } else {
+          setMessage(`Eroare: ${data.error}`);
+        }
+      } catch (error) {
+        setMessage('Eroare la conexiune.');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setMessage('Eroare la conexiune.');
-    } finally {
-      setLoading(false);
-    }
+    };
+    reader.readAsArrayBuffer(file);
   };
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>Încărcare fișier</h1>
+      <h1>Încărcare fișier în Cloudinary</h1>
       <form onSubmit={handleUpload}>
         <input
           type="file"

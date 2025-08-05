@@ -1,0 +1,18 @@
+{
+  "title": "Swaply - The smart way to swap things",
+  "description": "Swap, chat and trade objects easily.",
+  "welcome": "Welcome to Swaply!",
+  "menu": {
+    "home": "Home",
+    "addObject": "Add Object",
+    "profile": "Profile",
+    "messages": "Messages",
+    "checkout": "Checkout",
+    "debug": "Debug"
+  },
+  "form": {
+    "submit": "Submit",
+    "selectCategory": "Select category",
+    "uploadImage": "Upload image"
+  }
+}

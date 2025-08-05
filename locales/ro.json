@@ -1,0 +1,18 @@
+{
+  "title": "Swaply - Modul inteligent de a schimba lucruri",
+  "description": "Schimbă, discută și tranzacționează obiecte ușor.",
+  "welcome": "Bine ai venit la Swaply!",
+  "menu": {
+    "home": "Acasă",
+    "addObject": "Adaugă obiect",
+    "profile": "Profil",
+    "messages": "Mesaje",
+    "checkout": "Finalizare",
+    "debug": "Debug"
+  },
+  "form": {
+    "submit": "Trimite",
+    "selectCategory": "Selectează categoria",
+    "uploadImage": "Încarcă imagine"
+  }
+}

@@ -1,13 +1,8 @@
-const NextI18Next = require('next-i18next').default;
+import NextI18Next from 'next-i18next';
 
-const i18n = new NextI18Next({
-  defaultLocale: 'ro',
-  locales: ['ro', 'en'],
-  localePath: './locales',
-  detection: {
-    order: ['cookie', 'header', 'querystring'],
-    caches: ['cookie'],
-  },
+const NextI18NextInstance = new NextI18Next({
+  defaultLanguage: 'en',
+  otherLanguages: ['ro'],
 });
 
-module.exports = i18n;
+export default NextI18NextInstance;

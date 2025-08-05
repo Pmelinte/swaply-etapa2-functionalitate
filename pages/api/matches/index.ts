@@ -1,41 +1,25 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import db from '../../../lib/db'
-import jwt from 'jsonwebtoken'
+import { NextApiRequest, NextApiResponse } from 'next';
+import db from '../../../lib/db'; // Drum relativ pentru compatibilitate CI/CD
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const userId = req.query.userId;
+
   try {
-    const token = req.cookies.token
-    if (!token) return res.status(401).json({ error: 'Not logged in' })
+    const database = await db();
+    const stmt = await database.prepare(`SELECT * FROM wants WHERE user_id = ?`);
+    const wants = await stmt.all(userId);
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret')
-    const userId = decoded.userId
-
-    // Găsim ce își dorește userul logat
-    const wants = db.prepare(`SELECT * FROM wants WHERE user_id = ?`).all(userId)
-
-    if (wants.length === 0) {
-      return res.json({ matches: [] })
+    if (!wants || wants.length === 0) {
+      return res.json({ matches: [] });
     }
 
-    // Pentru fiecare preferință, căutăm obiecte din acea categorie
-    const matches = []
-    for (const want of wants) {
-      const objs = db.prepare(`
-        SELECT o.*, u.username, u.avatar_url
-        FROM objects o
-        JOIN users u ON o.user_id = u.id
-        WHERE o.category = ? AND o.user_id != ?
-      `).all(want.desired_category, userId)
-
-      matches.push(...objs.map(obj => ({
-        object: obj,
-        matchesWant: want
-      })))
-    }
-
-    res.json({ matches })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Server error' })
+    return res.json({ matches: wants });
+  } catch (error) {
+    console.error('Matches API error:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs'; // bcryptjs pentru compatibilitate CI/CD
 import db from '../../../lib/db'; // Drum relativ pentru compatibilitate CI/CD
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

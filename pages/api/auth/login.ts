@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import db from '@/lib/db';
+import db from '../../../lib/db'; // Drum relativ în loc de alias
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const database = await db(); // Așteptăm conexiunea DB
+    const database = await db();
     const stmt = await database.prepare('SELECT * FROM users WHERE email = ?');
     const user = await stmt.get(req.body.email);
 

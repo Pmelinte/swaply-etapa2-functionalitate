@@ -1,15 +1,5 @@
 {
-  "version": 2,
   "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next"
-    }
-  ],
-  "env": {
-    "NODE_VERSION": "18"
-  },
-  "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run build",
-  "framework": "nextjs"
+    { "src": "next.config.js", "use": "@vercel/next" }
+  ]
 }

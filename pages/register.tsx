@@ -10,7 +10,7 @@ export default function Register() {
   const [sex, setSex] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await fetch('/api/auth/register', {
       method: 'POST',

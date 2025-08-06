@@ -21,25 +21,4 @@ export default function UploadForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ file: base64 })
       });
-      const data = await res.json();
-      setImageUrl(data.url);
-    } catch (err) {
-      console.error('Upload error', err);
-    }
-    setLoading(false);
-  };
-
-  return (
-    <div>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => e.target.files && handleUpload(e.target.files[0])}
-      />
-      {loading && <p>Uploading...</p>}
-      {imageUrl && (
-        <img src={`${imageUrl}?q_auto,f_auto`} alt="Uploaded" width="300" />
-      )}
-    </div>
-  );
-}
+      const data =

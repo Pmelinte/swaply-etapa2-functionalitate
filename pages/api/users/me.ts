@@ -11,9 +11,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret')
     const userId = decoded.userId
 
-    // 🟢 Aici obții instanța DB asincron!
+    // Obține instanța DB asincron!
     const database = await db();
-    const user = database.prepare('SELECT id, username, email FROM users WHERE id = ?').get(userId);
+    const statement = await database.prepare('SELECT id, username, email FROM users WHERE id = ?');
+    const user = await statement.get(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' })

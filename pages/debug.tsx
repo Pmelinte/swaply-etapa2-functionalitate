@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
+import { GetStaticPropsContext } from 'next'; // <-- ADAUGI asta!
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 export default function Debug() {
   const [objects, setObjects] = useState([])
@@ -39,12 +41,11 @@ export default function Debug() {
   )
 }
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-
-export async function getStaticProps({ locale }) {
+// !!! MODIFICĂ semnătura funcției aici !!!
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
     },
   }
 }

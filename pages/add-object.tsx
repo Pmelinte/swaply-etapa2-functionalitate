@@ -9,7 +9,7 @@ export default function AddObject() {
   const [category, setCategory] = useState("")
   const [exchangeMode, setExchangeMode] = useState("direct")
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await fetch('/api/objects', {
       method: 'POST',

@@ -1,27 +1,20 @@
-import Head from 'next/head'
-import { useTranslation } from 'next-i18next'
+import { GetStaticPropsContext } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export default function Checkout() {
-  const { t } = useTranslation('common')
-
+export default function CheckoutPage() {
   return (
-    <>
-      <Head>
-        <title>{t('checkout')} | Swaply</title>
-        <meta property="og:title" content={`${t('checkout')} | Swaply`} />
-      </Head>
-      <h1 className="text-2xl font-bold mb-4">{t('checkout')}</h1>
-      <p className="text-gray-700">Aceasta este o pagină de checkout demonstrativă.</p>
-    </>
-  )
+    <div>
+      <h1>Checkout</h1>
+      {/* Poți adăuga aici conținutul paginii de checkout */}
+    </div>
+  );
 }
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-
-export async function getStaticProps({ locale }) {
+// Funcția corect tipizată pentru static props
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
     },
-  }
+  };
 }

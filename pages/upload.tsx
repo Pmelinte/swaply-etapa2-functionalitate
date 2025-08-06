@@ -1,53 +1,37 @@
 import { useState } from 'react';
 
-export default function UploadPage() {
+export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      setMessage('Selectează un fișier mai întâi.');
-      return;
-    }
+    if (!file) return;
 
-    setLoading(true);
+    setUploading(true);
     const reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onloadend = async () => {
-      try {
-        const res = await fetch('/api/objects/upload', {
-          method: 'POST',
-          body: reader.result as string,
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setMessage(`Fișier încărcat: ${data.url}`);
-        } else {
-          setMessage(`Eroare: ${data.error}`);
-        }
-      } catch (error) {
-        setMessage('Eroare la conexiune.');
-      } finally {
-        setLoading(false);
-      }
+      const base64data = reader.result;
+
+      const res = await fetch('/api/objects/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: base64data }),
+      });
+
+      const data = await res.json();
+      setUploading(false);
+      alert(`Uploaded: ${data.url}`);
     };
-    reader.readAsArrayBuffer(file);
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Încărcare fișier în Cloudinary</h1>
-      <form onSubmit={handleUpload}>
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Se încarcă...' : 'Încarcă'}
-        </button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+      <button type="submit" disabled={uploading}>
+        {uploading ? 'Uploading...' : 'Upload'}
+      </button>
+    </form>
   );
 }

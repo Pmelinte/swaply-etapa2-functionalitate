@@ -1,15 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import cloudinary from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 
-cloudinary.v2.config({
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-export const config = {
-  api: { bodyParser: false },
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -17,19 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of req) {
-      chunks.append(chunk as Uint8Array);
-    }
-    const buffer = Buffer.concat(chunks);
-    const base64Data = `data:image/jpeg;base64,${buffer.toString('base64')}`;
+    const { file } = req.body; // trebuie să primească Base64 sau URL temporar
 
-    const uploadResponse = await cloudinary.v2.uploader.upload(base64Data, {
-      folder: 'swaply',
+    const uploadResponse = await cloudinary.uploader.upload(file, {
+      folder: 'swaply_uploads',
     });
 
     res.status(200).json({ url: uploadResponse.secure_url });
-  } catch (err) {
-    res.status(500).json({ error: 'Upload to Cloudinary failed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Upload failed' });
   }
 }

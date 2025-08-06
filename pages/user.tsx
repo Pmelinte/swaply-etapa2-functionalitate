@@ -1,13 +1,14 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 export default function Users() {
   const [query, setQuery] = useState('')
   const [location, setLocation] = useState('')
   const [minRating, setMinRating] = useState('')
   const [category, setCategory] = useState('')
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -65,7 +66,7 @@ export default function Users() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {users.map((user: any) => (
+          {users.map((user) => (
             <Link 
               key={user.id} 
               href={`/messages?to=${user.id}`}
@@ -92,9 +93,11 @@ export default function Users() {
   )
 }
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+// Tipizare corectă la getStaticProps:
+import type { GetStaticPropsContext } from 'next'
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const locale = context.locale || 'en'
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common'])),

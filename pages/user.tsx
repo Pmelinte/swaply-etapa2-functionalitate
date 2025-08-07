@@ -66,7 +66,7 @@ export default function Users() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {users.map((user) => (
+          {users.map((user: any) => (
             <Link 
               key={user.id} 
               href={`/messages?to=${user.id}`}
@@ -93,11 +93,8 @@ export default function Users() {
   )
 }
 
-// Tipizare corectă la getStaticProps:
-import type { GetStaticPropsContext } from 'next'
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  const locale = context.locale || 'en'
+// IMPORTANT: Nu șterge asta, e pentru i18n/Next.js
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common'])),

@@ -1,38 +1,45 @@
-import { useState, useEffect } from 'react';
+// pages/matches.tsx
+import { useEffect, useState } from 'react'
+import supabase from '../lib/supabase'
 
-type Match = {
-  object: {
-    username: string;
-    avatar_url: string;
-    title: string;
-    description: string;
-    category: string;
-  };
-  matchesWant: {
-    desired_category: string;
-    keywords: string;
-  };
-};
+type MatchType = {
+  id: number
+  object1_id: number
+  object2_id: number
+  created_at: string
+}
 
 export default function MatchesPage() {
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [matches, setMatches] = useState<MatchType[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/matches')
-      .then(res => res.json())
-      .then(data => setMatches(data));
-  }, []);
+    async function fetchMatches() {
+      setLoading(true)
+      const { data, error } = await supabase.from('matches').select('*')
+      if (!error && data) setMatches(data)
+      setLoading(false)
+    }
+    fetchMatches()
+  }, [])
 
   return (
-    <ul>
-      {matches.map((match, index) => (
-        <li key={index} className="border p-4 rounded">
-          <p><strong>Owner:</strong> {match.object.username}</p>
-          <p><strong>Avatar:</strong> <img src={match.object.avatar_url} alt="avatar" width="50"/></p>
-          <p><strong>Offers:</strong> {match.object.title} - {match.object.description} ({match.object.category})</p>
-          <p><strong>You want:</strong> {match.matchesWant.desired_category} ({match.matchesWant.keywords})</p>
-        </li>
-      ))}
-    </ul>
-  );
+    <div>
+      <h1>Potriviri (Matches)</h1>
+      {loading ? (
+        <p>Se încarcă...</p>
+      ) : matches.length === 0 ? (
+        <p>Nu există potriviri.</p>
+      ) : (
+        <ul>
+          {matches.map(match => (
+            <li key={match.id}>
+              Obiect 1 ID: {match.object1_id} — Obiect 2 ID: {match.object2_id} <br />
+              <small>Creat la: {new Date(match.created_at).toLocaleString()}</small>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
 }

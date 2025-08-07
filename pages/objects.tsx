@@ -1,5 +1,6 @@
 // pages/objects.tsx
 import { useState, useEffect } from 'react';
+import supabase from '../lib/supabase';
 
 type ObjType = {
   id: number | string;
@@ -10,29 +11,37 @@ type ObjType = {
 
 export default function ObjectsPage() {
   const [objects, setObjects] = useState<ObjType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/objects')
-      .then(res => res.json())
-      .then(data => {
-        // Dacă răspunsul e obiect și nu array, încearcă:
-        if (Array.isArray(data)) {
-          setObjects(data);
-        } else if (Array.isArray(data.objects)) {
-          setObjects(data.objects);
-        } else {
-          setObjects([]);
-        }
-      });
+    async function fetchObjects() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('objects')
+        .select('*')
+        .order('id', { ascending: true });
+      if (error) {
+        console.error('Supabase error:', error);
+        setObjects([]);
+      } else {
+        setObjects(data || []);
+      }
+      setLoading(false);
+    }
+    fetchObjects();
   }, []);
 
   return (
-    <ul className="space-y-2">
-      {objects.map(obj => (
-        <li key={obj.id} className="border p-4 rounded">
-          <strong>{obj.title}</strong> - {obj.description} ({obj.category})
-        </li>
-      ))}
-    </ul>
+    <div>
+      <h1>Obiecte din Supabase</h1>
+      {loading && <p>Se încarcă...</p>}
+      <ul className="space-y-2">
+        {objects.map(obj => (
+          <li key={obj.id} className="border p-4 rounded">
+            <strong>{obj.title}</strong> - {obj.description} ({obj.category})
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

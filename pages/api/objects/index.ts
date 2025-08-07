@@ -11,14 +11,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const database = await db();
     const stmt = await database.prepare(`
-      SELECT o.id, o.title, o.category, o.description, o.image, u.email AS owner
+      SELECT o.id, o.title, o.category, o.description, o.image_url, u.email AS owner
       FROM objects o
-      LEFT JOIN users u ON o.userId = u.id
+      LEFT JOIN users u ON o.user_id = u.id
     `);
 
-    const objects = query && typeof query === 'string'
-      ? await stmt.all(query)
-      : await stmt.all();
+    const objects = await stmt.all();
 
     return res.json({ objects });
   } catch (error) {

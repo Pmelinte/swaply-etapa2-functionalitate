@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import db from '../../../lib/db'; // Drum relativ pentru compatibilitate CI/CD
+import db from '../../../lib/db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const database = await db();
     const stmt = await database.prepare(`
-      SELECT m.*, u.username as from_username
+      SELECT m.*, u.name as from_username
       FROM messages m
       JOIN users u ON m.from_user_id = u.id
     `);

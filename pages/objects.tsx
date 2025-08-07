@@ -1,7 +1,8 @@
+// pages/objects.tsx
 import { useState, useEffect } from 'react';
 
 type ObjType = {
-  id: number | string; // sau doar number dacă știi sigur!
+  id: number | string;
   title: string;
   description: string;
   category: string;
@@ -13,7 +14,16 @@ export default function ObjectsPage() {
   useEffect(() => {
     fetch('/api/objects')
       .then(res => res.json())
-      .then(data => setObjects(data));
+      .then(data => {
+        // Dacă răspunsul e obiect și nu array, încearcă:
+        if (Array.isArray(data)) {
+          setObjects(data);
+        } else if (Array.isArray(data.objects)) {
+          setObjects(data.objects);
+        } else {
+          setObjects([]);
+        }
+      });
   }, []);
 
   return (
